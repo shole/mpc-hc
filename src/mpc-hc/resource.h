@@ -462,6 +462,7 @@
 #define IDC_LIST1                       11160
 #define IDC_LIST2                       11161
 #define IDC_LIST3                       11162
+#define IDC_LIST_SUBFOLDERS             11163
 #define IDC_TAB1                        11200
 #define IDC_ANIMATE1                    11220
 #define IDC_PROGRESS1                   11240
@@ -647,6 +648,7 @@
 #define IDD_ADDCOMMAND_DLG              20020
 #define IDD_PPAGETOOLBAR                20021
 #define IDD_PPAGETOOLBARLAYOUT          20022
+#define IDD_SENDTOFOLDER                20023
 #define IDB_DT_CB_96                    20050
 #define IDB_DT_CB_120                   20051
 #define IDB_DT_CB_144                   20052
@@ -768,6 +770,7 @@
 #define ID_VIEW_HALFFLOATINGPOINTPROCESSING 24043
 #define ID_FILE_RECYCLE                 24044
 #define ID_VIEW_MPCTHEME                24045
+#define ID_FILE_SENDTOFOLDER            24046
 #define PLAYER_PLAYLIST_UPDATE_SCROLLBAR 24048
 #define IDF_LOGO4                       24050
 #define ID_SUBTITLES_OVERRIDE_DEFAULT_STYLE 24051
@@ -1803,6 +1806,8 @@
 #define IDS_FAVORITES_UNSAVED_CHANGES   57730
 #define IDS_ABOUT_COPYRIGHT             57731
 #define IDS_ABOUT_COPYRIGHT_YEAR        57732
+#define IDS_FILE_SENDTOFOLDER           57733
+#define IDS_FILE_MOVE_ERROR             57734
 
 // Next default values for new objects
 // 

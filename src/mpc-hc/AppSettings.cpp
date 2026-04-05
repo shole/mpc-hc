@@ -572,6 +572,7 @@ static constexpr wmcmd_base default_wmcmds[] = {
     { ID_FILE_OPENDIRECTORY,                0, 0,                 IDS_AG_OPENDIRECTORY },
     { ID_FILE_REOPEN,                     'E', FCONTROL,          IDS_AG_REOPEN },
     { ID_FILE_RECYCLE,              VK_DELETE, 0,                 IDS_FILE_RECYCLE },
+    { ID_FILE_SENDTOFOLDER,               'S', FALT,              IDS_FILE_SENDTOFOLDER },
     { ID_FILE_SAVE_COPY,                    0, 0,                 IDS_AG_SAVE_COPY },
     { ID_FILE_SAVE_IMAGE,                 'I', FALT,              IDS_AG_SAVE_IMAGE },
     { ID_FILE_SAVE_IMAGE_AUTO,          VK_F5, 0,                 IDS_MPLAYERC_6 },

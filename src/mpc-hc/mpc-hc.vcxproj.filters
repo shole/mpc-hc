@@ -304,6 +304,9 @@
     <ClCompile Include="SaveDlg.cpp">
       <Filter>Modal Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="SendToFolderDlg.cpp">
+      <Filter>Modal Dialogs</Filter>
+    </ClCompile>
     <ClCompile Include="SaveImageDialog.cpp">
       <Filter>Modal Dialogs</Filter>
     </ClCompile>
@@ -861,6 +864,9 @@
       <Filter>Modal Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="SaveDlg.h">
+      <Filter>Modal Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SendToFolderDlg.h">
       <Filter>Modal Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="SaveImageDialog.h">

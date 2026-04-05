@@ -177,6 +177,7 @@ public:
 
     bool SelectFileInPlaylist(LPCTSTR filename);
     bool DeleteFileInPlaylist(POSITION pos, bool recycle = true);
+    bool MoveFileInPlaylist(POSITION pos, const CString& destFolder);
     bool IsExternalPlayListActive(CStringW& playlistPath);
     void ClearExternalPlaylistIfInvalid();
 

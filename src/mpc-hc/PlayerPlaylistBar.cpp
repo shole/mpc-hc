@@ -1624,6 +1624,70 @@ bool CPlayerPlaylistBar::DeleteFileInPlaylist(POSITION pos, bool recycle)
     return true;
 }
 
+bool CPlayerPlaylistBar::MoveFileInPlaylist(POSITION pos, const CString& destFolder)
+{
+    CAutoLock pledit(&m_plEditLock);
+
+    CString filename = m_pl.GetAt(pos).m_fns.GetHead();
+    if (PathUtils::IsURL(filename)) {
+        return false;
+    }
+
+    int slash = filename.ReverseFind(_T('\\'));
+    CString baseName = (slash >= 0) ? filename.Mid(slash + 1) : filename;
+    CString destPath = destFolder + _T("\\") + baseName;
+    DWORD moveFlags = 0;
+    if (::GetFileAttributes(destPath) != INVALID_FILE_ATTRIBUTES) {
+        CString msg;
+        msg.Format(_T("%s already exists.\nDo you want to replace it?"), baseName.GetString());
+        if (AfxMessageBox(msg, MB_ICONQUESTION | MB_YESNO, 0) == IDYES) {
+            moveFlags = MOVEFILE_REPLACE_EXISTING;
+        } else {
+            return false; // User declined — playlist and playback untouched
+        }
+    }
+
+    bool isplaying = (pos == m_pl.GetPos());
+
+    if (isplaying) {
+        m_pMainFrame->CloseMedia(true, false);
+    }
+
+    if (!::MoveFileEx(filename, destPath, moveFlags)) { // Move file
+        AfxMessageBox(IDS_FILE_MOVE_ERROR, MB_ICONERROR | MB_OK);
+        if (isplaying) {
+            m_pMainFrame->OpenCurPlaylistItem(); // Reopen at same playlist position
+        }
+        return false;
+    }
+
+    POSITION nextpos = pos;
+    m_pl.GetNext(nextpos);
+    if (nextpos == nullptr && m_pl.GetCount() > 1) {
+        nextpos = m_pl.GetHeadPosition();
+    }
+
+    int listPos = FindItem(pos);
+    if (listPos >= 0) {
+        m_pl.RemoveAt(pos); // remove from playlist
+        m_list.DeleteItem(listPos);
+        m_list.RedrawItems(listPos, m_list.GetItemCount() - 1);
+        SavePlaylist();
+    } else {
+        ASSERT(false);
+    }
+
+    if (isplaying) {
+        if (nextpos) {
+            m_pl.SetPos(nextpos);
+            m_pMainFrame->OpenCurPlaylistItem();
+        }
+        // No nextpos: last item — media stays closed
+    }
+
+    return true;
+}
+
 void CPlayerPlaylistBar::LoadPlaylist(LPCTSTR filename)
 {
     CString base;

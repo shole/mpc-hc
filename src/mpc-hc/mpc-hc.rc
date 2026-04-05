@@ -1241,6 +1241,18 @@ BEGIN
     PUSHBUTTON      "v",IDC_BUTTON6,82,270,16,16
 END
 
+IDD_SENDTOFOLDER DIALOGEX 0, 0, 200, 185
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Send to Folder"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Select destination subfolder:",IDC_STATIC,7,7,186,8
+    LISTBOX         IDC_LIST_SUBFOLDERS,7,18,186,143,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "Move",IDOK,93,167,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,149,167,50,14
+END
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -4245,6 +4257,12 @@ BEGIN
     IDS_AG_DISABLE_REPEAT   "Disable Repeat"
     IDS_SHUFFLE_ON          "Shuffle: On"
     IDS_SHUFFLE_OFF         "Shuffle: Off"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_FILE_SENDTOFOLDER   "Send to Folder"
+    IDS_FILE_MOVE_ERROR     "Failed to move file."
 END
 
 STRINGTABLE

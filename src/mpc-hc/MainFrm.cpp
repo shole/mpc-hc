@@ -34,6 +34,7 @@
 
 #include "FavoriteAddDlg.h"
 #include "GoToDlg.h"
+#include "SendToFolderDlg.h"
 #include "MediaTypesDlg.h"
 #include "OpenFileDlg.h"
 #include "PnSPresetsDlg.h"
@@ -345,6 +346,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_UPDATE_COMMAND_UI_RANGE(ID_FILE_OPEN_OPTICAL_DISK_START, ID_FILE_OPEN_OPTICAL_DISK_END, OnUpdateFileOpen)
     ON_COMMAND(ID_FILE_REOPEN, OnFileReopen)
     ON_COMMAND(ID_FILE_RECYCLE, OnFileRecycle)
+    ON_COMMAND(ID_FILE_SENDTOFOLDER, OnFileSendToFolder)
+    ON_UPDATE_COMMAND_UI(ID_FILE_SENDTOFOLDER, OnUpdateFileSendToFolder)
     ON_COMMAND(ID_FILE_SAVE_COPY, OnFileSaveAs)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_COPY, OnUpdateFileSaveAs)
     ON_COMMAND(ID_FILE_SAVE_IMAGE, OnFileSaveImage)
@@ -5419,6 +5422,69 @@ void CMainFrame::OnFileRecycle()
     }
 
     m_wndPlaylistBar.DeleteFileInPlaylist(m_wndPlaylistBar.m_pl.GetPos());
+}
+
+void CMainFrame::OnUpdateFileSendToFolder(CCmdUI* pCmdUI)
+{
+    pCmdUI->Enable(GetLoadState() == MLS::LOADED && GetPlaybackMode() == PM_FILE);
+}
+
+void CMainFrame::OnFileSendToFolder()
+{
+    if (GetLoadState() != MLS::LOADED || GetPlaybackMode() != PM_FILE) {
+        return;
+    }
+
+    POSITION pos = m_wndPlaylistBar.m_pl.GetPos();
+    if (!pos) {
+        return;
+    }
+
+    CString filename = m_wndPlaylistBar.m_pl.GetAt(pos).m_fns.GetHead();
+    if (PathUtils::IsURL(filename)) {
+        return;
+    }
+
+    // Build parent directory path
+    int slash = filename.ReverseFind(_T('\\'));
+    if (slash < 0) {
+        return;
+    }
+    CString dir = filename.Left(slash + 1);
+
+    // Enumerate direct subfolders (non-recursive)
+    CStringArray subfolders;
+    WIN32_FIND_DATA fd;
+    HANDLE hFind = ::FindFirstFile(dir + _T("*"), &fd);
+    if (hFind != INVALID_HANDLE_VALUE) {
+        do {
+            if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
+                    _tcscmp(fd.cFileName, _T(".")) != 0 &&
+                    _tcscmp(fd.cFileName, _T("..")) != 0) {
+                subfolders.Add(dir + fd.cFileName);
+            }
+        } while (::FindNextFile(hFind, &fd));
+        ::FindClose(hFind);
+    }
+
+    if (subfolders.IsEmpty()) {
+        CString msg;
+        msg.Format(_T("No subfolders found in:\n\n%s"), dir.GetString());
+        AfxMessageBox(msg, MB_ICONINFORMATION | MB_OK);
+        return;
+    }
+
+    OAFilterState fs = GetMediaState();
+    if (fs == State_Running) {
+        MediaControlPause(true);
+    }
+
+    CSendToFolderDlg dlg(subfolders, this);
+    if (dlg.DoModal() == IDOK) {
+        m_wndPlaylistBar.MoveFileInPlaylist(pos, dlg.m_selectedFolder);
+    } else if (fs == State_Running) {
+        MediaControlRun();
+    }
 }
 
 void CMainFrame::OnFileReopen()
